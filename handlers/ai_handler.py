@@ -1,4 +1,5 @@
 from aiogram import Router, types
+from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
@@ -29,7 +30,7 @@ async def ai_cancel(callback: CallbackQuery, state: FSMContext):
         reply_markup=return_to_menu_kb()
     )
 
-@router.message(AIChat.chatting)
+@router.message(StateFilter(AIChat.chatting))
 async def ai_message(message: types.Message, state: FSMContext):
     await message.chat.do("typing")
     user_text = message.text
