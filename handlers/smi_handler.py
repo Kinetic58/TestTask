@@ -7,7 +7,6 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 router = Router()
 
-
 @router.callback_query(lambda c: c.data == "menu:smi")
 async def fast_info(callback: CallbackQuery):
     await callback.message.edit_text(
@@ -18,7 +17,6 @@ async def fast_info(callback: CallbackQuery):
         reply_markup=smi_menu()
     )
 
-
 @router.callback_query(lambda c: c.data == "weather:smi")
 async def weather_menu(callback: CallbackQuery):
     await callback.message.edit_text(
@@ -28,7 +26,6 @@ async def weather_menu(callback: CallbackQuery):
         parse_mode="HTML",
         reply_markup=weather_cities_menu()
     )
-
 
 @router.callback_query(lambda c: c.data.startswith("city:"))
 async def get_weather_callback(callback: CallbackQuery):
