@@ -1,4 +1,6 @@
 import asyncio
+import os
+
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from cnf.config import BOT_TOKEN
@@ -22,7 +24,8 @@ async def main():
 
 
     def run_fastapi():
-        uvicorn.run("utils.miniapp_server:app", host="0.0.0.0", port=8080, log_level="info")
+        port = int(os.environ.get("PORT", 8080))
+        uvicorn.run("utils.miniapp_server:app", host="0.0.0.0", port=port, log_level="info")
 
     t = threading.Thread(target=run_fastapi, daemon=True)
     t.start()
