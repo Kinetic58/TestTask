@@ -8,17 +8,7 @@ def main_menu(webapp_url: str = None):
     kb.button(text="🤖 Получить совет от ИИ", callback_data="menu:ai")
     kb.button(text="ℹ️ О боте", callback_data="menu:about")
     kb.button(text="📊 Информация", callback_data="menu:smi")
-
-    if webapp_url:
-        webapp_full_url = f"{webapp_url}/miniapp"
-        print(f"🔗 Создана WebApp кнопка с URL: {webapp_full_url}")
-        kb.button(
-            text="🏆 Таблица рекордов (WebApp)",
-            web_app=WebAppInfo(url=webapp_full_url)
-        )
-    else:
-        print("⚠️ Создана fallback кнопка таблицы рекордов")
-        kb.button(text="🏆 Таблица рекордов", callback_data="menu:leaderboard")
+    kb.button(text=" Таблица рекордов", web_app=WebAppInfo(url="https://testtask-azmg.onrender.com/miniapp"))
 
     kb.adjust(1)
     return kb.as_markup()
