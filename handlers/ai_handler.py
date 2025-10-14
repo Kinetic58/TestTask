@@ -5,7 +5,8 @@ from aiogram.fsm.state import StatesGroup, State
 
 from utils.fsm import AIChat
 from utils.keyboards import ai_cancel_kb, return_to_menu_kb
-from api_settings.openai_api import ask_openai
+from api_settings.deepseek_api import ask_deepseek as ask_openai
+
 
 router = Router()
 
