@@ -1,5 +1,7 @@
 #!/bin/bash
 
+uvicorn main:app --host 0.0.0.0 --port $PORT
+
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
@@ -17,5 +19,7 @@ import time
 while True:
     time.sleep(60)
 " &
+
+
 
 python -u main.py

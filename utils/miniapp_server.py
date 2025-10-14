@@ -5,7 +5,7 @@ from database_function.db_core import get_db
 from database_function.models import Leaderboard
 from sqlalchemy import select
 import os
-from starlette.responses import HTMLResponse
+from starlette.responses import HTMLResponse, RedirectResponse
 
 app = FastAPI()
 
@@ -14,6 +14,9 @@ miniapp_dir = os.path.join(BASE_DIR, "miniapp")
 
 app.mount("/miniapp_static", StaticFiles(directory=miniapp_dir), name="miniapp_static")
 
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/miniapp")
 
 @app.get("/miniapp")
 async def miniapp():
