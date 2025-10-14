@@ -1,3 +1,5 @@
+import html
+
 from aiogram import Router, types
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
@@ -35,4 +37,5 @@ async def ai_message(message: types.Message, state: FSMContext):
     await message.chat.do("typing")
     user_text = message.text
     answer = await ask_openai(user_text)
-    await message.answer(f"<b>🤖 Ответ ИИ:</b>\n{answer}", parse_mode="HTML")
+    safe_answer = html.escape(answer)
+    await message.answer(f"<b>🤖 Ответ ИИ:</b>\n{safe_answer}", parse_mode="HTML")
