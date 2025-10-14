@@ -1,6 +1,6 @@
 import os
 import asyncio
-from deepseek_api.dsk.api import DeepSeekAPI, AuthenticationError, CloudflareError, APIError
+from dsk.api import DeepSeekAPI, AuthenticationError, CloudflareError, APIError
 
 DEEPSEEK_TOKEN = os.getenv("DEEPSEEK_TOKEN")
 api = DeepSeekAPI(DEEPSEEK_TOKEN)

@@ -6,6 +6,7 @@ def main_menu(webapp_url: str = None):
     kb = InlineKeyboardBuilder()
     kb.button(text="🎯 Пройти квест", callback_data="menu:quest")
     kb.button(text="🤖 Получить совет от ИИ", callback_data="menu:ai")
+    kb.button(text="🖼️ Сгенерировать изображение", callback_data="ai:generate_image")
     kb.button(text="ℹ️ О боте", callback_data="menu:about")
     kb.button(text="📊 Информация", callback_data="menu:smi")
     kb.button(text=" Таблица рекордов", web_app=WebAppInfo(url="https://testtask-azmg.onrender.com/miniapp"))

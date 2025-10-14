@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from cnf.config import BOT_TOKEN
 from database_function.db_core import init_models
+from handlers import image_handler
 from handlers.start_handler import router as start_router
 from handlers.about_handler import router as about_router
 from handlers.menu_handler import router as menu_router
@@ -39,6 +40,7 @@ async def main():
     dp.include_router(quest_router)
     dp.include_router(menu_router)
     dp.include_router(smi_router)
+    dp.include_router(image_handler.router)
     try:
         await dp.start_polling(bot)
     finally:
