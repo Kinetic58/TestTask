@@ -6,7 +6,8 @@ import asyncio
 load_dotenv()
 
 client = AsyncOpenAI(
-    api_key=os.getenv("OPENAI_API_KEY")
+    api_key=os.getenv("OPENAI_API_KEY"),
+    project=os.getenv("OPENAI_PROJECT_ID")
 )
 
 async def ask_openai(prompt: str) -> str:
