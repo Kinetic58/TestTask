@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: testtask
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: ./start.sh
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    plan: free
+
