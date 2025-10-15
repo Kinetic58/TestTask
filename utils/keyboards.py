@@ -81,3 +81,5 @@ def return_to_menu_kb():
     kb = InlineKeyboardBuilder()
     kb.button(text="⬅️ В главное меню", callback_data="menu:main")
     return kb.as_markup()
+
+
