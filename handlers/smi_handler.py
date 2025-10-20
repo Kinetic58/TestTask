@@ -4,6 +4,7 @@ from utils.keyboards import main_menu, smi_menu, weather_cities_menu, currency_m
 from utils.parser import get_weather, get_currency_rate
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+import time
 
 router = Router()
 
@@ -29,6 +30,7 @@ async def weather_menu(callback: CallbackQuery):
 
 @router.callback_query(lambda c: c.data.startswith("city:"))
 async def get_weather_callback(callback: CallbackQuery):
+    start_time = time.perf_counter()
     city_key = callback.data.split(":")[1]
     city_names = {"moscow": "Москва", "spb": "Санкт-Петербург", "nsk": "Новосибирск"}
     await callback.answer("⏳ Получаем актуальные данные погоды...")
@@ -39,9 +41,12 @@ async def get_weather_callback(callback: CallbackQuery):
     except Exception as e:
         weather_info = f"Не удалось получить данные ☁️\nОшибка: {e}"
 
+    elapsed = time.perf_counter() - start_time
+
     text = (
         f"<b>🌤 Погода в {city_names.get(city_key, city_key.capitalize())}</b>\n\n"
         f"{weather_info}\n\n"
+        f"⏱ Время отклика: {elapsed:.2f} сек\n\n"
         "Вы можете выбрать другой город или вернуться в главное меню."
     )
     await callback.message.edit_text(
@@ -49,7 +54,6 @@ async def get_weather_callback(callback: CallbackQuery):
         parse_mode="HTML",
         reply_markup=weather_cities_menu(selected_city=city_key)
     )
-
 
 @router.callback_query(lambda c: c.data == "currency:smi")
 async def currency_menu_main(callback: CallbackQuery):
@@ -61,9 +65,9 @@ async def currency_menu_main(callback: CallbackQuery):
         reply_markup=currency_menu()
     )
 
-
 @router.callback_query(lambda c: c.data.startswith("currency:"))
 async def get_currency_callback(callback: CallbackQuery):
+    start_time = time.perf_counter()
     currency = callback.data.split(":")[1]
     await callback.answer("⏳ Получаем актуальные курсы валют...")
     try:
@@ -73,9 +77,12 @@ async def get_currency_callback(callback: CallbackQuery):
     except Exception as e:
         rate_info = f"Не удалось получить данные 💱\nОшибка: {e}"
 
+    elapsed = time.perf_counter() - start_time
+
     text = (
         f"<b>💱 Курс {currency}</b>\n\n"
         f"{rate_info}\n\n"
+        f"⏱ Время отклика: {elapsed:.2f} сек\n\n"
         "Вы можете выбрать другую валюту или вернуться в главное меню."
     )
     await callback.message.edit_text(
@@ -83,4 +90,3 @@ async def get_currency_callback(callback: CallbackQuery):
         parse_mode="HTML",
         reply_markup=currency_menu(selected_currency=currency)
     )
-
