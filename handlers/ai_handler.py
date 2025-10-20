@@ -33,10 +33,5 @@ async def ai_cancel(callback: CallbackQuery, state: FSMContext):
 
 @router.message(StateFilter(AIChat.chatting))
 async def ai_message(message: types.Message, state: FSMContext):
-    token = await get_access_token()
-    start_time = time.perf_counter()
-    result = await ask_gigachat(message.text, token)
-    elapsed = time.perf_counter() - start_time
-    response_text = f"{result['response']}\n\n⏱ Время отклика: {elapsed:.2f} сек"
     await message.answer("⏳ Запрос отправлен ИИ, подождите немного...")
-    await message.answer(response_text, parse_mode="HTML")
+    await ai_worker.add_task(message.from_user.id, message.text, message.bot)
