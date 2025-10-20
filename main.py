@@ -38,13 +38,13 @@ def setup_routers(dispatcher: Dispatcher):
 
 
 async def keep_alive():
-    while True:
-        try:
-            async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession() as session:
+        while True:
+            try:
                 await session.get("https://testtask-azmg.onrender.com/health")
-        except Exception:
-            pass
-        await asyncio.sleep(300)
+            except Exception:
+                pass
+            await asyncio.sleep(300)
 
 
 @asynccontextmanager
