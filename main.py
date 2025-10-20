@@ -1,9 +1,12 @@
-# main.py
 import asyncio
-import os
 import logging
+import os
+from contextlib import asynccontextmanager
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
+import aiohttp
+from fastapi import FastAPI
+from utils.miniapp_server import app
 from cnf.config import BOT_TOKEN
 from database_function.db_core import init_models
 from handlers.start_handler import router as start_router
@@ -13,15 +16,25 @@ from handlers.ai_handler import router as ai_router
 from handlers.quest_handler import router as quest_router
 from handlers.smi_handler import router as smi_router
 from handlers.generate_image_handler import router as generate_image_router
-from utils.miniapp_server import app as fastapi_app
-from contextlib import asynccontextmanager
-import aiohttp
-import uvicorn
 
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
+
+
+def setup_routers(dispatcher: Dispatcher):
+    for router in [
+        start_router,
+        about_router,
+        ai_router,
+        quest_router,
+        menu_router,
+        smi_router,
+        generate_image_router
+    ]:
+        if router.parent_router is None:
+            dispatcher.include_router(router)
 
 
 async def keep_alive():
@@ -34,31 +47,20 @@ async def keep_alive():
         await asyncio.sleep(300)
 
 
-async def start_bot():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await init_models()
-    logging.info("🤖 Бот запущен")
-
-    dp.include_router(start_router)
-    dp.include_router(about_router)
-    dp.include_router(ai_router)
-    dp.include_router(quest_router)
-    dp.include_router(menu_router)
-    dp.include_router(smi_router)
-    dp.include_router(generate_image_router)
-
+    setup_routers(dp)
+    logging.info("🤖 Бот запускается...")
+    asyncio.create_task(dp.start_polling(bot))
     asyncio.create_task(keep_alive())
-    await dp.start_polling(bot)
+    yield
     await bot.session.close()
 
 
-@asynccontextmanager
-async def lifespan(app: fastapi_app):
-    asyncio.create_task(start_bot())
-    yield
-
-
-fastapi_app.router.lifespan_context = lifespan
+app.router.lifespan_context = lifespan
 
 if __name__ == "__main__":
+    import uvicorn
     port = int(os.environ.get("PORT", 8080))
-    uvicorn.run("main:fastapi_app", host="0.0.0.0", port=port, reload=False)
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
