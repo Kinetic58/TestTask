@@ -24,7 +24,7 @@ class QuestProgress(Base):
     __tablename__ = "quest_progress"
     id = Column(Integer, primary_key=True, index=True)
     tg_id = Column(Integer, nullable=False, index=True)
-    step = Column(Integer, default=0)  # 0..3
+    step = Column(Integer, default=0)
     score = Column(Integer, default=0)
     answers = Column(Text, nullable=True)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

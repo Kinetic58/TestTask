@@ -1,25 +1,23 @@
-import uuid
-
-import requests
+import asyncio
 from aiogram import Router, types
 from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
-
 from api_settings.requests import get_access_token, ask_gigachat
 from utils.fsm import AIChat
 from utils.keyboards import ai_cancel_kb, return_to_menu_kb
+import time
+from utils.workers.ai_queue import AIWorker
 
 router = Router()
+ai_worker = AIWorker()
 
 @router.callback_query(lambda c: c.data == "menu:ai")
 async def ai_start(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AIChat.chatting)
     await callback.message.edit_text(
-        "<b>🤖 Вы вошли в режим общения с ИИ (GigaChat)!</b>\n\n"
-        "Напишите ваш вопрос, и бот ответит вам.\n"
-        "<i>Для отмены нажмите кнопку ниже.</i>",
+        "<b>🤖 Вы вошли в диалог с ИИ (GigaChat)</b>\n\n"
+        "Напишите ваш вопрос ниже 👇",
         parse_mode="HTML",
         reply_markup=ai_cancel_kb()
     )
@@ -35,13 +33,5 @@ async def ai_cancel(callback: CallbackQuery, state: FSMContext):
 
 @router.message(StateFilter(AIChat.chatting))
 async def ai_message(message: types.Message, state: FSMContext):
-    await message.chat.do("typing")
-    user_text = message.text
-
-    try:
-        token = get_access_token()
-        answer = ask_gigachat(user_text, token)
-        await message.answer(f"<b>🤖 Ответ GigaChat:</b>\n{answer}", parse_mode="HTML")
-    except Exception as e:
-        await message.answer("⚠️ Ошибка при обращении к GigaChat. Попробуйте позже.")
-        print(f"GigaChat error: {e}")
+    await message.answer("⏳ Запрос отправлен ИИ, подождите немного...")
+    await ai_worker.add_task(message.from_user.id, message.text, message.bot)

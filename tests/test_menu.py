@@ -9,5 +9,4 @@ async def test_menu_ai(monkeypatch):
     callback.data = "menu:ai"
     callback.message = AsyncMock()
     state = AsyncMock()
-
     callback.message.edit_text.assert_called()

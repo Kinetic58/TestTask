@@ -2,7 +2,6 @@ from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-
 from utils.fsm import AIChat
 from utils.keyboards import ai_cancel_kb, return_to_menu_kb
 import urllib.parse
@@ -10,7 +9,6 @@ import requests
 import os
 
 router = Router()
-
 
 @router.callback_query(F.data == "ai:generate_image")
 async def start_generation(callback: CallbackQuery, state: FSMContext):

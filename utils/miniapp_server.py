@@ -24,6 +24,11 @@ async def miniapp():
     return HTMLResponse(open(index_path, "r", encoding="utf-8").read())
 
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
 @app.get("/miniapp/data")
 async def leaderboard_data():
     async with get_db() as session:
