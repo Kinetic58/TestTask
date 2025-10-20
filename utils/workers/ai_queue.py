@@ -1,5 +1,7 @@
 import asyncio
+import time
 from api_settings.requests import get_access_token, ask_gigachat
+
 
 class AIWorker:
     def __init__(self):
@@ -17,8 +19,16 @@ class AIWorker:
             user_id, prompt, bot = await self.queue.get()
             try:
                 token = await get_access_token()
-                response = await ask_gigachat(prompt, token)
-                await bot.send_message(user_id, f"🤖 Ответ от GigaChat:\n\n{response}")
+
+                start_time = time.perf_counter()
+                response_text = await ask_gigachat(prompt, token)
+                elapsed = time.perf_counter() - start_time
+
+                message = (
+                    f"🤖 Ответ от GigaChat:\n\n{response_text}\n\n"
+                    f"⏱ Время отклика: {elapsed:.2f} сек"
+                )
+                await bot.send_message(user_id, message)
             except Exception as e:
                 await bot.send_message(user_id, "⚠️ Произошла ошибка при обращении к ИИ.")
                 print(f"[AIWorker Error] {e}")

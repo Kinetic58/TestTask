@@ -1,7 +1,11 @@
+import time
+
 from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
+
+from api_settings.image_API import generate_image
 from utils.fsm import AIChat
 from utils.keyboards import ai_cancel_kb, return_to_menu_kb
 import urllib.parse
@@ -19,7 +23,6 @@ async def start_generation(callback: CallbackQuery, state: FSMContext):
         reply_markup=ai_cancel_kb()
     )
 
-
 @router.message(StateFilter(AIChat.generating_image))
 async def process_prompt(message: Message, state: FSMContext):
     prompt = message.text.strip()
@@ -27,12 +30,20 @@ async def process_prompt(message: Message, state: FSMContext):
         await message.answer("❌ Пожалуйста, введите описание изображения.")
         return
 
-    await message.answer("🔄 Генерирую изображение...")
+    await message.answer("🔄 Генерирую изображение, подождите...")
 
-    import urllib.parse
-    encoded_prompt = urllib.parse.quote(prompt)
-    image_url = f"https://picsum.photos/seed/{encoded_prompt}/800/600"
+    try:
+        start_time = time.perf_counter()
+        image_bytes = await generate_image(prompt)
+        elapsed = time.perf_counter() - start_time
 
-    await message.answer_photo(image_url, caption=f"🖼 Результат по запросу: '{prompt}'")
+        await message.answer_photo(
+            image_bytes,
+            caption=f"🖼 Результат по запросу: '{prompt}'\n⏱ Время отклика: {elapsed:.2f} сек"
+        )
+    except Exception as e:
+        await message.answer(f"⚠️ Произошла ошибка при генерации изображения: {e}")
+        print(f"[ImageGeneration Error] {e}")
+
     await state.clear()
 
