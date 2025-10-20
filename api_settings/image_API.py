@@ -1,7 +1,7 @@
 import os
 import httpx
 
-UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY")
+UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_API_KEY")
 
 
 async def generate_image_unsplash(prompt: str) -> str:
